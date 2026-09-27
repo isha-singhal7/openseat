@@ -1,5 +1,6 @@
+import 'leaflet/dist/leaflet.css'
 import { useEffect } from 'react'
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 'react-leaflet'
 import L from 'leaflet'
 
 // Fix default marker icons broken by bundlers
@@ -9,6 +10,8 @@ L.Icon.Default.mergeOptions({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 })
+
+const UC_BERKELEY: [number, number] = [37.8719, -122.2585]
 
 type Meal = {
   id: string
@@ -34,14 +37,22 @@ function ClickHandler({ onPick }: { onPick: (lat: number, lng: number) => void }
   return null
 }
 
+function FitBounds({ meals }: { meals: Meal[] }) {
+  const map = useMap()
+  useEffect(() => {
+    if (meals.length === 0) return
+    const bounds = L.latLngBounds(meals.map((m) => [m.data.lat, m.data.lng]))
+    map.fitBounds(bounds, { maxZoom: 15, padding: [40, 40] })
+  }, [map, meals.length])
+  return null
+}
+
+const MAP_STYLE = { height: '360px', width: '100%', borderRadius: '0.5rem' }
+
 export function MealMap(props: Props) {
   if (props.mode === 'pick') {
     return (
-      <MapContainer
-        center={[37.8716, -122.2727]}
-        zoom={13}
-        style={{ height: '300px', width: '100%', borderRadius: '0.5rem' }}
-      >
+      <MapContainer center={UC_BERKELEY} zoom={15} style={MAP_STYLE}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -54,21 +65,13 @@ export function MealMap(props: Props) {
     )
   }
 
-  const center: [number, number] =
-    props.meals.length > 0
-      ? [props.meals[0].data.lat, props.meals[0].data.lng]
-      : [37.8716, -122.2727]
-
   return (
-    <MapContainer
-      center={center}
-      zoom={13}
-      style={{ height: '350px', width: '100%', borderRadius: '0.5rem' }}
-    >
+    <MapContainer center={UC_BERKELEY} zoom={15} style={MAP_STYLE}>
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       />
+      <FitBounds meals={props.meals} />
       {props.meals.map((m) => (
         <Marker key={m.id} position={[m.data.lat, m.data.lng]}>
           <Popup>
