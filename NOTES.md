@@ -43,6 +43,16 @@ Trade-off: friends added *after* a meal is posted won't see it. Noted; acceptabl
 ### Scheduled job — next step
 Past meals are hidden with a client-side time filter (`new Date(m.data.time) > now`). A DeepSpace scheduled job to auto-delete expired meals is the correct long-term fix — add a `cron.ts` task that queries meals older than their time and calls `tools.deleteWhere('meals', ...)`. Deferred due to time.
 
-## Phase 3 – Join Requests & Bring List (next)
-- Schemas: `join_requests`, `bring_items`
-- Server action for seat-check on approval (prevent double-booking last seat)
+## Phase 3 – Join Requests ✅
+
+### What was built
+- `join_requests` schema with `collaboratorsField: 'participants'` (`[hostId, requesterId]`)
+- `requestJoin` action: verifies caller is in `meal.participants` (friends-only, server-enforced), not host, not duplicate
+- `respondJoin` action: verifies `hostId === userId` from join_request (immutable, server-written); checks `status === 'pending'`; on approve, reads current attendees and rejects if `attendees.length >= seats`
+- `attendees` JSON column on meals updated on approval; visible to all meal collaborators
+- Inline join/approve/decline UI on meal cards; real-time via `useQuery`
+
+### Next steps
+- **Edit meal**: no edit page exists; host can only cancel. Add `/meals/:id/edit` with a pre-filled form calling a `updateMeal` server action (check `hostId === userId`, reject if attendees already booked).
+- **Scheduled job**: auto-delete expired meals via a `cron.ts` task using `tools.deleteWhere('meals', ...)` on records whose `time` is in the past.
+- **Bring list**: for picnic/potluck meals, let host list items and approved attendees claim them (needs a `bring_items` schema with `collaboratorsField` matching the meal's participants).

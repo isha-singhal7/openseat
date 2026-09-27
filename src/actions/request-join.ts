@@ -8,7 +8,12 @@ export const requestJoin: ActionHandler<Env> = async ({ userId, params, tools })
   const meal = await tools.get('meals', mealId)
   if (!meal.success || !meal.data) return { success: false, error: 'Meal not found.' }
 
-  const mealData = (meal.data as { data: { hostId: string; seats: number; time: string } }).data
+  const mealData = (meal.data as { data: { hostId: string; seats: number; time: string; participants?: string } }).data
+
+  // Verify caller is a friend of the host (in participants snapshot)
+  const participants: string[] = JSON.parse(mealData.participants || '[]')
+  if (!participants.includes(userId)) return { success: false, error: 'Meal not found.' }
+
   if (mealData.hostId === userId) return { success: false, error: 'You are hosting this meal.' }
   if (new Date(mealData.time) <= new Date()) return { success: false, error: 'This meal has already passed.' }
 

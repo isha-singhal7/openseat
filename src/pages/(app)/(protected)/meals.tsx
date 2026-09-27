@@ -135,9 +135,6 @@ function MealCard({
       {/* Host controls */}
       {isHost && (
         <div className="flex gap-3 border-t border-border pt-2 mt-1">
-          <Link to={`/meals/${meal.id}/edit`} className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground">
-            Edit
-          </Link>
           <button
             disabled={busy}
             onClick={cancel}
