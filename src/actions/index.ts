@@ -5,6 +5,8 @@ import { sendFriendRequest } from './send-friend-request'
 import { respondFriendRequest } from './respond-friend-request'
 import { postMeal } from './post-meal'
 import { cancelMeal } from './cancel-meal'
+import { requestJoin } from './request-join'
+import { respondJoin } from './respond-join'
 
 export const actions: Record<string, ActionHandler<Env>> = {
   setProfile,
@@ -12,4 +14,6 @@ export const actions: Record<string, ActionHandler<Env>> = {
   respondFriendRequest,
   postMeal,
   cancelMeal,
+  requestJoin,
+  respondJoin,
 }

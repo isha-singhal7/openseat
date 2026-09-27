@@ -20,6 +20,7 @@ export const mealsSchema: CollectionSchema = {
     },
     { name: 'notes', storage: 'text', interpretation: 'plain' },
     { name: 'participants', storage: 'text', interpretation: { kind: 'json' } },
+    { name: 'attendees', storage: 'text', interpretation: { kind: 'json' } },
   ],
   ownerField: 'hostId',
   collaboratorsField: 'participants',

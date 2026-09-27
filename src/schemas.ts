@@ -14,6 +14,7 @@ import { profilesSchema } from './schemas/profiles-schema'
 import { friendRequestsSchema } from './schemas/friend-requests-schema'
 import { friendshipsSchema } from './schemas/friendships-schema'
 import { mealsSchema } from './schemas/meals-schema'
+import { joinRequestsSchema } from './schemas/join-requests-schema'
 
 export const schemas: CollectionSchema[] = [
   usersSchema,
@@ -22,4 +23,5 @@ export const schemas: CollectionSchema[] = [
   friendRequestsSchema,
   friendshipsSchema,
   mealsSchema,
+  joinRequestsSchema,
 ]
