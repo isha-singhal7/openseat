@@ -5,10 +5,13 @@ import { Button, Input, Label } from '@/components/ui'
 
 const MealMap = lazy(() => import('@/components/MealMap').then((m) => ({ default: m.MealMap })))
 
-// Minimum datetime string for the input (now + 5 min)
+// Minimum datetime string for the datetime-local input — must be local time, not UTC.
+// toISOString() is always UTC; in negative-offset zones (e.g. PDT = UTC−7) it produces
+// a date that's ahead of the user's local day, making every local value fail min validation.
 function minDatetime() {
   const d = new Date(Date.now() + 5 * 60_000)
-  return d.toISOString().slice(0, 16)
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
 
 export default function NewMealPage() {
@@ -26,10 +29,11 @@ export default function NewMealPage() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
-    if (lat == null || lng == null) {
-      setError('Click the map to set a location.')
-      return
-    }
+    if (!place.trim()) { setError('Enter a place name.'); return }
+    if (!address.trim()) { setError('Enter an address.'); return }
+    if (lat == null || lng == null) { setError('Click the map to drop a pin.'); return }
+    if (!time) { setError('Pick a date and time.'); return }
+    if (new Date(time) <= new Date()) { setError('Meal time must be in the future.'); return }
     setSaving(true)
     setError(null)
     const result = await callAction('postMeal', { place, address, lat, lng, time, seats, type, notes })
