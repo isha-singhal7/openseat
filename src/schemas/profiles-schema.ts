@@ -10,7 +10,7 @@ export const profilesSchema: CollectionSchema = {
   ownerField: 'userId',
   uniqueOn: ['username'],
   permissions: {
-    viewer: { read: true, create: false, update: false, delete: false },
+    viewer: { read: false, create: false, update: false, delete: false },
     member: { read: true, create: false, update: false, delete: false },
     admin: { read: true, create: true, update: true, delete: true },
   },

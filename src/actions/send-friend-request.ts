@@ -15,14 +15,13 @@ export const sendFriendRequest: ActionHandler<Env> = async ({ userId, params, to
 
   if (toId === userId) return { success: false, error: 'You cannot friend yourself.' }
 
-  // No duplicate requests
-  const dup = await tools.query('friend_requests', { where: { fromId: userId, toId } })
+  // No pending request in either direction
+  const dup = await tools.query('friend_requests', { where: { fromId: userId, toId, status: 'pending' } })
   if (dup.success && dup.data?.records?.length) {
     return { success: false, error: 'Friend request already sent.' }
   }
 
-  // No reverse duplicate
-  const rev = await tools.query('friend_requests', { where: { fromId: toId, toId: userId } })
+  const rev = await tools.query('friend_requests', { where: { fromId: toId, toId: userId, status: 'pending' } })
   if (rev.success && rev.data?.records?.length) {
     return { success: false, error: 'That user already sent you a request.' }
   }
