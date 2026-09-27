@@ -13,6 +13,7 @@ import { settingsSchema } from './schemas/admin-schema'
 import { profilesSchema } from './schemas/profiles-schema'
 import { friendRequestsSchema } from './schemas/friend-requests-schema'
 import { friendshipsSchema } from './schemas/friendships-schema'
+import { mealsSchema } from './schemas/meals-schema'
 
 export const schemas: CollectionSchema[] = [
   usersSchema,
@@ -20,4 +21,5 @@ export const schemas: CollectionSchema[] = [
   profilesSchema,
   friendRequestsSchema,
   friendshipsSchema,
+  mealsSchema,
 ]

@@ -27,10 +27,21 @@ The DeepSpace client SDK (`deepspace`) exposes no `callAction` or `useAction` he
 
 ---
 
-## Phase 2 – Meal Posts (next)
-- Schemas: `meals` (place, address, lat, lng, time, seats, type, notes, hostId)
-- Scheduled job to expire meals past their time
-- LeafletJS map with OpenStreetMap tiles
+## Phase 2 – Meal Posts ✅
+
+### What was built
+- `meals` schema with `collaboratorsField: 'participants'` for friends-only server-enforced reads
+- `postMeal` server action: queries host's current friends, builds participant snapshot, creates meal
+- `cancelMeal` server action: verifies `hostId === userId` before deleting
+- `/meals` page: list + map toggle (Leaflet + OpenStreetMap tiles), future-meals filter, cancel/edit links for host
+- `/meals/new` page: form with click-to-pin Leaflet map, manual place name + address entry
+
+### Friends-only enforcement
+`read: 'collaborator'` on the meals schema. The `postMeal` action queries all of the host's friendships and writes `participants = [hostId, ...friendIds]`. The RecordRoom enforces the collaborator check server-side — no UI-only filtering.
+Trade-off: friends added *after* a meal is posted won't see it. Noted; acceptable for demo scale.
+
+### Scheduled job — next step
+Past meals are hidden with a client-side time filter (`new Date(m.data.time) > now`). A DeepSpace scheduled job to auto-delete expired meals is the correct long-term fix — add a `cron.ts` task that queries meals older than their time and calls `tools.deleteWhere('meals', ...)`. Deferred due to time.
 
 ## Phase 3 – Join Requests & Bring List (next)
 - Schemas: `join_requests`, `bring_items`

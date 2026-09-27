@@ -17,6 +17,7 @@ export interface NavItem {
 
 export const nav: NavItem[] = [
   { path: '/home', label: 'Home' },
+  { path: '/meals', label: 'Meals', roles: ['member', 'admin'] },
   { path: '/friends', label: 'Friends', roles: ['member', 'admin'] },
   { path: '/profile', label: 'Profile', roles: ['member', 'admin'] },
   { path: '/settings', label: 'Settings' },
